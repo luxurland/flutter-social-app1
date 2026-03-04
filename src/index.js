@@ -105,7 +105,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // AUTH REGISTER
+    // REGISTER
     if (request.method === "POST" && url.pathname === "/auth/register") {
       const body = await request.json();
       const email = decryptAES128(body.email);
@@ -125,7 +125,7 @@ export default {
       });
     }
 
-    // START CALL (5 minutes)
+    // START CALL
     if (request.method === "POST" && url.pathname === "/calls/start") {
       try {
         const userId = await getUserIdFromRequest(request);
@@ -420,6 +420,77 @@ export default {
             success: true,
             call_id,
             total_collected: totalTemp,
+          }),
+          { headers: { "Content-Type": "application/json" } }
+        );
+      } catch (e) {
+        return new Response(
+          JSON.stringify({ success: false, error: e.message }),
+          { status: 400 }
+        );
+      }
+    }
+
+    // CALL HISTORY
+    if (request.method === "GET" && url.pathname === "/calls/history") {
+      try {
+        const userId = await getUserIdFromRequest(request);
+
+        const calls = await env.db1
+          .prepare(
+            `
+            SELECT 
+              id,
+              call_type,
+              start_time,
+              end_time,
+              total_price
+            FROM calls
+            WHERE creator_id = ?
+            ORDER BY start_time DESC
+          `
+          )
+          .bind(userId)
+          .all();
+
+        const history = [];
+
+        for (const call of calls.results) {
+          const participants = await env.db1
+            .prepare(
+              `
+              SELECT users.id, users.name
+              FROM call_participants
+              JOIN users ON users.id = call_participants.user_id
+              WHERE call_participants.call_id = ?
+            `
+            )
+            .bind(call.id)
+            .all();
+
+          const names = participants.results.map((p) => p.name);
+          const duration = call.end_time
+            ? Math.floor(
+                (new Date(call.end_time) - new Date(call.start_time)) / 60000
+              )
+            : 0;
+
+          history.push({
+            call_id: call.id,
+            call_type: call.call_type,
+            participants: participants.results.length,
+            names,
+            total_price: call.total_price,
+            duration,
+            start_time: call.start_time,
+            end_time: call.end_time,
+          });
+        }
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            history,
           }),
           { headers: { "Content-Type": "application/json" } }
         );
