@@ -32,9 +32,14 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       title: "Social App",
       theme: darkMode ? AppTheme.dark : AppTheme.light,
+
+      // ❗ لا نستخدم home + initialRoute معًا
       initialRoute: AppRoutes.home,
+
       getPages: AppPages.pages,
-      home: AppShell(api: api),
+
+      // ❗ نحذف home: AppShell(api: api)
+      // لأن AppShell سيتم فتحه عبر Route /home
     );
   }
 }
