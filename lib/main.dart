@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api/api_service.dart';
-import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/store_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,8 +15,57 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Social App",
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginScreen(api: api),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: AppShell(api: api),
+    );
+  }
+}
+
+class AppShell extends StatefulWidget {
+  final ApiService api;
+  const AppShell({super.key, required this.api});
+
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> {
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final screens = [
+      HomeScreen(api: widget.api),
+      StoreScreen(api: widget.api),
+      ProfileScreen(api: widget.api),
+    ];
+
+    return Scaffold(
+      body: screens[index],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (i) => setState(() => index = i),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: "Home",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.store_outlined),
+            selectedIcon: Icon(Icons.store),
+            label: "Store",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: "Profile",
+          ),
+        ],
+      ),
     );
   }
 }
