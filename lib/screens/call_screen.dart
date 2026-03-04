@@ -47,7 +47,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       final result = await widget.callService.addParticipant(
         callId: widget.callId,
-        newUserId: "USER_TO_ADD", // replace with selected user
+        newUserId: "USER_TO_ADD",
       );
 
       setState(() {
@@ -97,6 +97,12 @@ class _CallScreenState extends State<CallScreen> {
     );
   }
 
+  String _formatDuration(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return "$m:$s";
+  }
+
   @override
   Widget build(BuildContext context) {
     final isVideo = widget.callType == "video";
@@ -131,8 +137,8 @@ class _CallScreenState extends State<CallScreen> {
 
             if (isVideo)
               Container(
-                height: 200,
-                width: 300,
+                height: 220,
+                width: 320,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade900,
                   borderRadius: BorderRadius.circular(20),
@@ -150,13 +156,3 @@ class _CallScreenState extends State<CallScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.call, color: Colors.white54, size: 80),
-                ),
-              ),
-
-            const Spacer(),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _actionButton(Icons
