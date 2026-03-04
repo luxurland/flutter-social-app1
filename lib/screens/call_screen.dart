@@ -47,7 +47,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       final result = await widget.callService.addParticipant(
         callId: widget.callId,
-        newUserId: "USER_TO_ADD",
+        newUserId: "USER_TO_ADD", // replace with selected user
       );
 
       setState(() {
@@ -156,3 +156,88 @@ class _CallScreenState extends State<CallScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
+                  child: Icon(Icons.call, color: Colors.white54, size: 80),
+                ),
+              ),
+
+            const Spacer(),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _actionButton(
+                  icon: Icons.person_add,
+                  label: "Add",
+                  color: Colors.blue,
+                  onTap: _addParticipant,
+                ),
+                _actionButton(
+                  icon: Icons.timer,
+                  label: "15m",
+                  color: Colors.orange,
+                  onTap: () => _extendCall(15),
+                ),
+                _actionButton(
+                  icon: Icons.timer,
+                  label: "30m",
+                  color: Colors.orange,
+                  onTap: () => _extendCall(30),
+                ),
+                _actionButton(
+                  icon: Icons.timer,
+                  label: "60m",
+                  color: Colors.orange,
+                  onTap: () => _extendCall(60),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
+
+            GestureDetector(
+              onTap: _endCall,
+              child: Container(
+                height: 70,
+                width: 70,
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.call_end, color: Colors.white, size: 40),
+              ),
+            ),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _actionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              shape: BoxShape.circle,
+              border: Border.all(color: color, width: 2),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+  }
+}
