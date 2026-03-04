@@ -1,101 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'api/api_service.dart';
 import 'routes/app_routes.dart';
 import 'features/home/ui/home_dashboard_screen.dart';
+import 'theme.dart';
 
 class AppShell extends StatefulWidget {
-  final ApiService api;
-
-  const AppShell({super.key, required this.api});
+  const AppShell({super.key});
 
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   final List<Widget> _pages = [
     HomeDashboardScreen(),
-    // Social Feed
     GetRouterOutlet(initialRoute: AppRoutes.personalFeed),
-    // Store
     GetRouterOutlet(initialRoute: AppRoutes.store),
-    // Calls
     GetRouterOutlet(initialRoute: AppRoutes.callLobby),
-    // Profile placeholder
-    Center(child: Text("Profile Coming Soon")),
+    GetRouterOutlet(initialRoute: AppRoutes.profile),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 250),
+    );
+    _animation = Tween<double>(begin: 1.0, end: 1.15).animate(_controller);
+  }
 
   void _onTabTapped(int index) {
     setState(() => _currentIndex = index);
+    _controller.forward().then((_) => _controller.reverse());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Social App"),
-      ),
-
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Center(
-                child: Text(
-                  "Menu",
-                  style: TextStyle(color: Colors.white, fontSize: 22),
-                ),
-              ),
-            ),
-
-            ListTile(
-              leading: Icon(Icons.report),
-              title: Text("Reports"),
-              onTap: () => Get.toNamed(AppRoutes.reports),
-            ),
-
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {},
-            ),
-
-            ListTile(
-              leading: Icon(Icons.help),
-              title: Text("Help"),
-              onTap: () {},
-            ),
-
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Logout"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
-
+      drawer: _buildDrawer(),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
       ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Social"),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: "Store"),
-          BottomNavigationBarItem(icon: Icon(Icons.call), label: "Calls"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        ],
-      ),
+      bottomNavigationBar: _buildBottomBar(),
     );
   }
-}
+
+  Widget _buildBottomBar() {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: AppTheme.light.primaryColor,
+          unselectedItemColor: Colors.grey,
+          items: [
+            BottomNavigationBarItem(
+              icon: Transform.scale(
+                scale: _currentIndex == 0 ? _animation.value : 1.0,
+                child: Icon(Icons.dashboard),
+              ),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Transform.scale(
+                scale: _currentIndex == 1 ? _animation.value : 1.0,
+                child: Icon(Icons.people),
+              ),
+              label: "Social",
+            ),
+            BottomNavigationBarItem(
+              icon: Transform.scale(
+                scale: _currentIndex == 2 ? _animation.value : 1.0,
+                child: Icon(Icons.store),
+              ),
+              label: "Store",
+            ),
+            BottomNavigationBarItem(
+              icon: Transform.scale(
+                scale: _currentIndex == 3 ? _animation.value : 1.0,
