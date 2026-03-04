@@ -7,26 +7,39 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
-  Map<String, String> get headers {
-    final h = {"Content-Type": "application/json"};
-    if (token != null) h["Authorization"] = "Bearer $token";
-    return h;
+  void setToken(String t) {
+    token = t;
   }
 
-  Future<Map<String, dynamic>> post(String path, Map body) async {
+  Future<dynamic> get(String endpoint) async {
+    final res = await http.get(
+      Uri.parse(baseUrl + endpoint),
+      headers: _headers(),
+    );
+    return _handleResponse(res);
+  }
+
+  Future<dynamic> post(String endpoint, Map body) async {
     final res = await http.post(
-      Uri.parse("$baseUrl$path"),
-      headers: headers,
+      Uri.parse(baseUrl + endpoint),
+      headers: _headers(),
       body: jsonEncode(body),
     );
-    return jsonDecode(res.body);
+    return _handleResponse(res);
   }
 
-  Future<Map<String, dynamic>> get(String path) async {
-    final res = await http.get(
-      Uri.parse("$baseUrl$path"),
-      headers: headers,
-    );
-    return jsonDecode(res.body);
+  Map<String, String> _headers() {
+    return {
+      "Content-Type": "application/json",
+      if (token != null) "Authorization": "Bearer $token",
+    };
+  }
+
+  dynamic _handleResponse(http.Response res) {
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      return jsonDecode(res.body);
+    } else {
+      throw Exception("API Error: ${res.body}");
+    }
   }
 }
