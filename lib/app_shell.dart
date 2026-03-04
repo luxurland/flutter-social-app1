@@ -87,3 +87,85 @@ class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin
             BottomNavigationBarItem(
               icon: Transform.scale(
                 scale: _currentIndex == 3 ? _animation.value : 1.0,
+                child: Icon(Icons.call),
+              ),
+              label: "Calls",
+            ),
+            BottomNavigationBarItem(
+              icon: Transform.scale(
+                scale: _currentIndex == 4 ? _animation.value : 1.0,
+                child: Icon(Icons.person),
+              ),
+              label: "Profile",
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Drawer _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF0B5FFF),
+                  Color(0xFF00C2D1),
+                ],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(radius: 30, backgroundColor: Colors.white),
+                SizedBox(height: 10),
+                Text("User Name", style: TextStyle(color: Colors.white, fontSize: 18)),
+                Text("user@email",
+                    style: TextStyle(color: Colors.white70, fontSize: 14)),
+              ],
+            ),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.account_balance_wallet),
+            title: Text("Wallet"),
+            onTap: () => Get.toNamed(AppRoutes.wallet),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.notifications),
+            title: Text("Notifications"),
+            onTap: () => Get.toNamed(AppRoutes.notifications),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.report),
+            title: Text("Reports"),
+            onTap: () => Get.toNamed(AppRoutes.reports),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text("Settings"),
+            onTap: () => Get.toNamed(AppRoutes.settings),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text("About"),
+            onTap: () {},
+          ),
+
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text("Logout"),
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
