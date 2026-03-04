@@ -49,6 +49,13 @@ class _StoreScreenState extends State<StoreScreen> {
                     ...products.map((p) => ListTile(
                           title: Text(p["name"]),
                           subtitle: Text("Price: ${p["price"]}"),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/product_details",
+                              arguments: p["id"],
+                            );
+                          },
                         ))
                   ],
                 ),
