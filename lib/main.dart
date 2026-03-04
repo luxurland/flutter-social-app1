@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'api/api_service.dart';
 import 'theme.dart';
 import 'app_shell.dart';
+import 'routes/app_pages.dart';
+import 'routes/app_routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,9 +29,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: "Social App",
       theme: darkMode ? AppTheme.dark : AppTheme.light,
+      initialRoute: AppRoutes.home,
+      getPages: AppPages.pages,
       home: AppShell(api: api),
     );
   }
