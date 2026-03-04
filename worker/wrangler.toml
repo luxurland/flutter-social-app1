@@ -1,0 +1,14 @@
+name = "flutter-social-app1"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables
+[vars]
+JWT_SECRET = "MS123456789.."
+
+# D1 Database binding
+[[d1_databases]]
+binding = "db1"
+database_name = "flutter-social-app1"
+database_id = "a46d55fd-772a-4baf-a71b-cb196f14cd3c"
