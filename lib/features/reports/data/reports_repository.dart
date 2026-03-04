@@ -1,13 +1,19 @@
-import 'reports_service.dart';
+import '../../../api/api_service.dart';
 
 class ReportsRepository {
-  final ReportsService service;
-  ReportsRepository(this.service);
+  final ApiService api;
 
-  Future<void> report(String type, String publicId, String reason) =>
-      service.reportPost(type, publicId, reason);
+  ReportsRepository(this.api);
 
-  Future<List<dynamic>> all() => service.getReports();
+  Future<List<dynamic>> all() async {
+    return await api.get("reports");
+  }
 
-  Future<void> resolve(int id) => service.resolveReport(id);
+  Future<void> resolve(int id) async {
+    await api.post("reports/resolve", {"id": id});
+  }
+
+  Future<void> send(String message) async {
+    await api.post("reports", {"message": message});
+  }
 }
