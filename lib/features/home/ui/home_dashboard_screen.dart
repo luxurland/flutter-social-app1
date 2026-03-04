@@ -8,6 +8,7 @@ class HomeDashboardScreen extends StatelessWidget {
   Widget _quickAction(String title, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
@@ -18,6 +19,13 @@ class HomeDashboardScreen extends StatelessWidget {
               Color(0xFF00C2D1),
             ],
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            )
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,7 +42,10 @@ class HomeDashboardScreen extends StatelessWidget {
   Widget _sectionTitle(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12),
-      child: Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -45,6 +56,7 @@ class HomeDashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0xFFF5F9FF),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Color(0xFFE0E7FF)),
       ),
       child: Center(
         child: Text(title, style: TextStyle(fontSize: 16, color: Colors.grey)),
@@ -70,10 +82,21 @@ class HomeDashboardScreen extends StatelessWidget {
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 12,
+                    offset: Offset(0, 6),
+                  )
+                ],
               ),
               child: Row(
                 children: [
-                  CircleAvatar(radius: 30, backgroundColor: Colors.white),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 35, color: Color(0xFF0B5FFF)),
+                  ),
                   SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +108,10 @@ class HomeDashboardScreen extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  Icon(Icons.notifications, color: Colors.white, size: 30),
+                  InkWell(
+                    onTap: () => Get.toNamed(AppRoutes.notifications),
+                    child: Icon(Icons.notifications, color: Colors.white, size: 30),
+                  ),
                 ],
               ),
             ),
