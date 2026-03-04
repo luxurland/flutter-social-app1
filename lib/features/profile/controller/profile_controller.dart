@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
+import '../../../api/api_service.dart';
 
 class ProfileController extends GetxController {
-  var username = "User Name".obs;
-  var bio = "This is your bio. Add something about yourself.".obs;
+  final ApiService api = Get.find();
+
+  var username = "".obs;
+  var bio = "".obs;
   var avatarUrl = "".obs;
   var coverUrl = "".obs;
 
@@ -12,6 +15,16 @@ class ProfileController extends GetxController {
   var followersCount = 0.obs;
 
   Future<void> loadProfile() async {
-    // TODO: ربط مع API /user/me
+    final res = await api.get("user/me");
+
+    username.value = res["username"] ?? "User";
+    bio.value = res["bio"] ?? "";
+    avatarUrl.value = res["avatar"] ?? "";
+    coverUrl.value = res["cover"] ?? "";
+
+    postsCount.value = res["posts"] ?? 0;
+    productsCount.value = res["products"] ?? 0;
+    callsCount.value = res["calls"] ?? 0;
+    followersCount.value = res["followers"] ?? 0;
   }
 }
