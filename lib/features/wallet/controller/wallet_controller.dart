@@ -12,23 +12,17 @@ class WalletController extends GetxController {
     loadWallet();
   }
 
-  Future<void> loadWallet() async {
-    loading.value = true;
+Future<void> loadWallet() async {
+  loading.value = true;
 
-    // TODO: ربط مع Worker API
-    await Future.delayed(Duration(milliseconds: 500));
+  final res = await api.get("wallet/balance");
+  balance.value = res["balance"];
 
-    balance.value = 42.50;
+  final tx = await api.get("wallet/transactions");
+  transactions.value = tx;
 
-    transactions.value = [
-      {"type": "call", "amount": -1.5, "date": "2026-03-01"},
-      {"type": "recharge", "amount": 10.0, "date": "2026-02-28"},
-      {"type": "store", "amount": -5.0, "date": "2026-02-27"},
-      {"type": "withdraw", "amount": -20.0, "date": "2026-02-25"},
-    ];
-
-    loading.value = false;
-  }
+  loading.value = false;
+}
 
   List<Map<String, dynamic>> get filteredTransactions {
     if (filter.value == "All") return transactions;
