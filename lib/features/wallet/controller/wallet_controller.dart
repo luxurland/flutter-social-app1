@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
+import '../../../api/api_service.dart';
 
 class WalletController extends GetxController {
+  final ApiService api = Get.find();
+
   var balance = 0.0.obs;
   var transactions = <Map<String, dynamic>>[].obs;
   var loading = false.obs;
@@ -12,17 +15,17 @@ class WalletController extends GetxController {
     loadWallet();
   }
 
-Future<void> loadWallet() async {
-  loading.value = true;
+  Future<void> loadWallet() async {
+    loading.value = true;
 
-  final res = await api.get("wallet/balance");
-  balance.value = res["balance"];
+    final res = await api.get("wallet/balance");
+    balance.value = res["balance"];
 
-  final tx = await api.get("wallet/transactions");
-  transactions.value = tx;
+    final tx = await api.get("wallet/transactions");
+    transactions.value = List<Map<String, dynamic>>.from(tx);
 
-  loading.value = false;
-}
+    loading.value = false;
+  }
 
   List<Map<String, dynamic>> get filteredTransactions {
     if (filter.value == "All") return transactions;
