@@ -5,23 +5,49 @@ import '../../../routes/app_routes.dart';
 class HomeDashboardScreen extends StatelessWidget {
   const HomeDashboardScreen({super.key});
 
-  Widget _card(String title, IconData icon, VoidCallback onTap) {
+  Widget _quickAction(String title, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.blueGrey.shade50,
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF0B5FFF),
+              Color(0xFF00C2D1),
+            ],
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.blue),
+            Icon(icon, size: 40, color: Colors.white),
             SizedBox(height: 12),
-            Text(title, style: TextStyle(fontSize: 16)),
+            Text(title, style: TextStyle(fontSize: 16, color: Colors.white)),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _placeholderCard(String title) {
+    return Container(
+      height: 120,
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Color(0xFFF5F9FF),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Text(title, style: TextStyle(fontSize: 16, color: Colors.grey)),
       ),
     );
   }
@@ -33,13 +59,40 @@ class HomeDashboardScreen extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.all(16),
           children: [
-            Text(
-              "Welcome!",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            // Header
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF0B5FFF),
+                    Color(0xFF00C2D1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(radius: 30, backgroundColor: Colors.white),
+                  SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Welcome back!",
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
+                      Text("User Name",
+                          style: TextStyle(color: Colors.white70, fontSize: 14)),
+                    ],
+                  ),
+                  Spacer(),
+                  Icon(Icons.notifications, color: Colors.white, size: 30),
+                ],
+              ),
             ),
 
             SizedBox(height: 20),
 
+            // Quick Actions
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
@@ -47,33 +100,27 @@ class HomeDashboardScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               physics: NeverScrollableScrollPhysics(),
               children: [
-                _card("Social Feed", Icons.people,
+                _quickAction("Social", Icons.people,
                     () => Get.toNamed(AppRoutes.personalFeed)),
-                _card("Store", Icons.store,
+                _quickAction("Store", Icons.store,
                     () => Get.toNamed(AppRoutes.store)),
-                _card("Calls", Icons.call,
+                _quickAction("Calls", Icons.call,
                     () => Get.toNamed(AppRoutes.callLobby)),
-                _card("Reports", Icons.report,
-                    () => Get.toNamed(AppRoutes.reports)),
+                _quickAction("Wallet", Icons.account_balance_wallet,
+                    () => Get.toNamed(AppRoutes.wallet)),
               ],
             ),
 
-            SizedBox(height: 30),
+            SizedBox(height: 20),
 
-            Text("Quick Access", style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
+            _sectionTitle("Latest Posts"),
+            _placeholderCard("No posts yet"),
 
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text("Call History"),
-              onTap: () => Get.toNamed(AppRoutes.callHistory),
-            ),
+            _sectionTitle("Latest Products"),
+            _placeholderCard("No products yet"),
 
-            ListTile(
-              leading: Icon(Icons.shopping_bag),
-              title: Text("My Products"),
-              onTap: () => Get.toNamed(AppRoutes.products),
-            ),
+            _sectionTitle("Recent Calls"),
+            _placeholderCard("No calls yet"),
           ],
         ),
       ),
