@@ -105,6 +105,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // AUTH REGISTER
     if (request.method === "POST" && url.pathname === "/auth/register") {
       const body = await request.json();
       const email = decryptAES128(body.email);
@@ -124,6 +125,7 @@ export default {
       });
     }
 
+    // START CALL (5 minutes)
     if (request.method === "POST" && url.pathname === "/calls/start") {
       try {
         const userId = await getUserIdFromRequest(request);
@@ -194,6 +196,7 @@ export default {
       }
     }
 
+    // ADD PARTICIPANT
     if (request.method === "POST" && url.pathname === "/calls/add-participant") {
       try {
         const userId = await getUserIdFromRequest(request);
@@ -272,6 +275,7 @@ export default {
       }
     }
 
+    // EXTEND CALL
     if (request.method === "POST" && url.pathname === "/calls/extend") {
       try {
         const userId = await getUserIdFromRequest(request);
@@ -349,6 +353,7 @@ export default {
       }
     }
 
+    // END CALL
     if (request.method === "POST" && url.pathname === "/calls/end") {
       try {
         const userId = await getUserIdFromRequest(request);
