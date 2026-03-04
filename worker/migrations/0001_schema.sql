@@ -1,77 +1,83 @@
--- wallets: each user's balance
-CREATE TABLE IF NOT EXISTS wallets ( 
-user_id TEXT PRIMARY KEY, 
-balance REAL NOT NULL DEFAULT 0, 
-updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+-- USERS
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user',
+    banned INTEGER DEFAULT 0,
+    user_hex_id TEXT UNIQUE
 );
 
--- Transactions: All shipping/discount transactions
-CREATE TABLE IF NOT EXISTS transactions ( 
-id TEXT PRIMARY KEY, 
-user_id TEXT NOT NULL, 
-amount REAL NOT NULL, 
-type TEXT NOT NULL, -- charge / money / payout 
-feature_key TEXT, 
-created_at TEXT DEFAULT CURRENT_TIMESTAMP
+-- WALLETS
+CREATE TABLE IF NOT EXISTS wallets (
+    user_id INTEGER PRIMARY KEY,
+    balance REAL NOT NULL DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
--- feature_prices: Feature prices (subject to modification later)
-CREATE TABLE IF NOT EXISTS feature_prices ( 
-id TEXT PRIMARY KEY, 
-feature_key TEXT UNIQUE NOT NULL, 
-price REAL NOT NULL, 
-currency TEXT DEFAULT 'EUR', 
-updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+-- TRANSACTIONS
+CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    type TEXT NOT NULL,
+    feature_key TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
--- calls: call data
-CREATE TABLE IF NOT EXISTS CALLS ( 
-id TEXT PRIMARY KEY, 
-creator_id TEXT NOT NULL, 
-call_type TEXT NOT NULL, -- voice/video 
-start_time TEXT, 
-end_time TEXT, 
-expires_at TEXT, 
-total_price REAL DEFAULT 0, 
-created_at TEXT DEFAULT CURRENT_TIMESTAMP
+-- FEATURE PRICES
+CREATE TABLE IF NOT EXISTS feature_prices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    feature_key TEXT UNIQUE NOT NULL,
+    price REAL NOT NULL,
+    currency TEXT DEFAULT 'EUR',
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
--- call_participants: Call participants
-CREATE TABLE IF NOT EXISTS call_participants ( 
-id TEXT PRIMARY KEY, 
-call_id TEXT NOT NULL, 
-user_id TEXT NOT NULL, 
-joined_at TEXT DEFAULT CURRENT_TIMESTAMP, 
-FOREIGN KEY(call_id) REFERENCES calls(id)
+-- CALLS
+CREATE TABLE IF NOT EXISTS calls (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    creator_id INTEGER NOT NULL,
+    call_type TEXT NOT NULL,
+    start_time TEXT,
+    end_time TEXT,
+    expires_at TEXT,
+    total_price REAL DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(creator_id) REFERENCES users(id)
 );
 
--- call_temp_wallet: Temporary discounts for each call
-CREATE TABLE IF NOT EXISTS call_temp_wallet ( 
-id TEXT PRIMARY KEY, 
-call_id TEXT NOT NULL, 
-user_id TEXT NOT NULL, 
-amount REAL NOT NULL, 
-created_at TEXT DEFAULT CURRENT_TIMESTAMP
+-- CALL PARTICIPANTS
+CREATE TABLE IF NOT EXISTS call_participants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    call_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    joined_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(call_id) REFERENCES calls(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
--- Current call rates (you can edit them later from the admin panel)
+-- CALL TEMP WALLET
+CREATE TABLE IF NOT EXISTS call_temp_wallet (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    call_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(call_id) REFERENCES calls(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
 
--- VOICE
-INSERT OR IGNORE INTO feature_prices (id, feature_key, price)
-VALUES
-
-(lower(hex(randomblob(16))), 'call_voice_5min', 0.05),
-
-(lower(hex(randomblob(16))), 'call_voice_15min', 0.20),
-
-(lower(hex(randomblob(16))), 'call_voice_30min', 0.40),
-
-(lower(hex(randomblob(16))), 'call_voice_60min', 0.80),
-
--- VIDEO
-
-(lower(hex(randomblob(16))), 'call_video_5min', 0.10),
-
-(lower(hex(randomblob(16))), 'call_video_15min', 0.40), 
-(lower(hex(randomlob(16))), 'call_video_30min', 0.80), 
-(lower(hex(randomlob(16))), 'call_video_60min', 1.50);
+-- FEATURE PRICES SEED
+INSERT OR IGNORE INTO feature_prices (feature_key, price) VALUES
+('call_voice_5min', 0.05),
+('call_voice_15min', 0.20),
+('call_voice_30min', 0.40),
+('call_voice_60min', 0.80),
+('call_video_5min', 0.10),
+('call_video_15min', 0.40),
+('call_video_30min', 0.80),
+('call_video_60min', 1.50);
