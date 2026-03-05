@@ -1,45 +1,90 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl;
-  String? token;
+  static const String baseUrl = "https://flutter-social-app1.mod-mhsn.workers.dev";
 
-  ApiService(this.baseUrl);
-
-  void setToken(String t) {
-    token = t;
+  // Save token
+  static Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("token", token);
   }
 
-  Future<dynamic> get(String endpoint) async {
-    final res = await http.get(
-      Uri.parse(baseUrl + endpoint),
-      headers: _headers(),
+  // Load token
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+
+  // Register user
+  static Future<Map<String, dynamic>> register(String username, String password) async {
+    final url = Uri.parse("$baseUrl/register");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "username": username,
+        "password": password,
+      }),
     );
-    return _handleResponse(res);
+
+    return jsonDecode(response.body);
   }
 
-  Future<dynamic> post(String endpoint, Map body) async {
-    final res = await http.post(
-      Uri.parse(baseUrl + endpoint),
-      headers: _headers(),
+  // Login user
+  static Future<Map<String, dynamic>> login(String username, String password) async {
+    final url = Uri.parse("$baseUrl/login");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "username": username,
+        "password": password,
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (data["token"] != null) {
+      await saveToken(data["token"]);
+    }
+
+    return data;
+  }
+
+  // Authenticated GET request
+  static Future<Map<String, dynamic>> getAuth(String endpoint) async {
+    final token = await getToken();
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // Authenticated POST request
+  static Future<Map<String, dynamic>> postAuth(String endpoint, Map<String, dynamic> body) async {
+    final token = await getToken();
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
       body: jsonEncode(body),
     );
-    return _handleResponse(res);
-  }
 
-  Map<String, String> _headers() {
-    return {
-      "Content-Type": "application/json",
-      if (token != null) "Authorization": "Bearer $token",
-    };
-  }
-
-  dynamic _handleResponse(http.Response res) {
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      return jsonDecode(res.body);
-    } else {
-      throw Exception("API Error: ${res.body}");
-    }
+    return jsonDecode(response.body);
   }
 }
