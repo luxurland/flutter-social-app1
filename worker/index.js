@@ -11,7 +11,7 @@ import { callHistory } from "./calls/history.js";
 import { createStore, getMyStore, getStoreById } from "./store/store.js";
 import { createProduct, getProductsByStore, hideProduct } from "./store/products.js";
 
-import { createPersonalPost, getPersonalFeed, hidePersonalPost } from "posts/personal.js";
+import { createPersonalPost, getPersonalFeed, hidePersonalPost } from "./posts/personal.js";
 import { createProductPost, getProductFeed, hideProductPost } from "./posts/product.js";
 
 import { reportPost, getReports, resolveReport } from "./posts/reports.js";
