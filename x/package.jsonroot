@@ -1,7 +1,0 @@
-{
-  "name": "flutter-social-app1",
-  "version": "1.0.0",
-  "scripts": {
-    "deploy": "echo Deploying Flutter Web + Worker"
-  }
-}
