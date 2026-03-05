@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 # D1 Database binding
 [[d1_databases]]
-binding = "DB"
+binding = "db"
 database_name = "db1"
 database_id = "a46d55fd-772a-4baf-a71b-cb196f14cd3c"
 
