@@ -15,3 +15,6 @@ tag = "v1"
 
 [vars]
 JWT_SECRET = "MS123456789.."
+
+
+assets = ["posts"]
