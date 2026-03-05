@@ -1,0 +1,15 @@
+name: Test Worker API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test login
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"username":"test","password":"123456"}' \
+          https://flutter-social-app1.mod-mhsn.workers.dev/login
