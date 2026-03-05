@@ -14,3 +14,23 @@ export async function hidePersonalPost(env, postId) {
   return { success: true };
 }
 
+export async function createPersonalPost(request, env, user) {
+  const { content } = await request.json();
+  if (!content) {
+    return new Response(JSON.stringify({ error: "Missing content" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  const result = await env.DB.prepare(
+    "INSERT INTO personal_posts (user_id, content, created_at) VALUES (?, ?, ?)"
+  )
+    .bind(user.id, content, new Date().toISOString())
+    .run();
+
+  return new Response(JSON.stringify({ id: result.lastInsertRowId }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
+}
