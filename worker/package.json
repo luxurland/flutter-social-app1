@@ -1,3 +1,10 @@
 {
-  "type": "module"
+  "name": "flutter-social-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "itty-router": "^4.0.12",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3"
+  }
 }
