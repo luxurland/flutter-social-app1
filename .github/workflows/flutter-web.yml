@@ -1,4 +1,4 @@
-name: Build and Deploy Flutter Web to Cloudflare Pages
+name: Build, Test and Deploy Flutter Web to Cloudflare Pages
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -16,13 +16,34 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.22.2'
           channel: stable
+
+      - name: Cache Flutter packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            build/
+            .dart_tool/
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
 
       - name: Enable Flutter Web
         run: flutter config --enable-web
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test --no-pub
+
+      - name: Clean build artifacts
+        run: flutter clean
 
       - name: Build Flutter Web
         run: flutter build web --release
