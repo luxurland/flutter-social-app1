@@ -1,16 +1,3 @@
-// export function json(data, status = 200) {
-//   return new Response(JSON.stringify(data), {
-//     status,
-//     headers: { "Content-Type": "application/json" }
-//   });
-// }
-
-// export function error(message, status = 400) {
-//   return json({ error: message }, status);
-// }
-
-
-// /flutter-social-app1/worker/utils/response.js
 export function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
