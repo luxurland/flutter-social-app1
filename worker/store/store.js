@@ -1,4 +1,3 @@
-// /worker/store/store.js
 import { json, error } from "../utils/response.js";
 
 export async function createStore(request, env, user) {
@@ -9,7 +8,6 @@ export async function createStore(request, env, user) {
       return error("Store name is required", 400);
     }
 
-    // Check if user already has a store
     const existing = await env.DB.prepare(
       "SELECT id FROM stores WHERE owner_id = ?"
     ).bind(user.id).first();
