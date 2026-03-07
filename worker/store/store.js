@@ -1,3 +1,12 @@
+// TEMPORARY DEBUGGING FOR STORE
+console.log('✅ Store module loaded');
+console.log('✅ Store functions:', {
+  createStore: typeof createStore,
+  getMyStore: typeof getMyStore,
+  getStoreById: typeof getStoreById
+});
+
+
 import { json, error } from "../utils/response.js";
 
 export async function createStore(request, env, user) {
