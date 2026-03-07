@@ -2,9 +2,15 @@
   "name": "flutter-social-worker",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
   "dependencies": {
-    "itty-router": "^4.0.12",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "bcryptjs": "^2.4.3",
+    "itty-router": "^4.2.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.71.0"
   }
 }
