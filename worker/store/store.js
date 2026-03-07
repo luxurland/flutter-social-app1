@@ -1,40 +1,77 @@
-// TEMPORARY DEBUGGING FOR STORE
-console.log('✅ Store module loaded');
-console.log('✅ Store functions:', {
-  createStore: typeof createStore,
-  getMyStore: typeof getMyStore,
-  getStoreById: typeof getStoreById
-});
-
-
+// /worker/store/store.js
 import { json, error } from "../utils/response.js";
 
 export async function createStore(request, env, user) {
-  const { name, description } = await request.json();
+  try {
+    const { name, description } = await request.json();
 
-  const result = await env.db1.prepare(
-    "INSERT INTO stores (owner_id, name, description) VALUES (?, ?, ?)"
-  ).bind(user.id, name, description).run();
+    if (!name) {
+      return error("Store name is required", 400);
+    }
 
-  return json({ store_id: result.lastInsertRowId });
+    // Check if user already has a store
+    const existing = await env.DB.prepare(
+      "SELECT id FROM stores WHERE owner_id = ?"
+    ).bind(user.id).first();
+
+    if (existing) {
+      return error("User already has a store", 409);
+    }
+
+    const result = await env.DB.prepare(
+      "INSERT INTO stores (owner_id, name, description) VALUES (?, ?, ?)"
+    ).bind(user.id, name, description || null).run();
+
+    return json({ 
+      success: true,
+      store_id: result.meta.last_row_id 
+    }, 201);
+
+  } catch (err) {
+    console.error("Error creating store:", err);
+    return error("Failed to create store", 500);
+  }
 }
 
 export async function getMyStore(request, env, user) {
-  const store = await env.db1.prepare(
-    "SELECT * FROM stores WHERE owner_id = ?"
-  ).bind(user.id).first();
+  try {
+    const store = await env.DB.prepare(
+      "SELECT * FROM stores WHERE owner_id = ?"
+    ).bind(user.id).first();
 
-  return json(store || {});
+    if (!store) {
+      return json({ store: null, message: "No store found" });
+    }
+
+    return json({ store });
+
+  } catch (err) {
+    console.error("Error getting store:", err);
+    return error("Failed to get store", 500);
+  }
 }
 
 export async function getStoreById(request, env) {
-  const id = Number(new URL(request.url).searchParams.get("id"));
+  try {
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
 
-  const store = await env.db1.prepare(
-    "SELECT * FROM stores WHERE id = ?"
-  ).bind(id).first();
+    if (!id) {
+      return error("Store ID is required", 400);
+    }
 
-  if (!store) return error("Store not found", 404);
+    const store = await env.DB.prepare(
+      "SELECT * FROM stores WHERE id = ?"
+    ).bind(Number(id)).first();
 
-  return json(store);
+    if (!store) {
+      return error("Store not found", 404);
+    }
+
+    return json({ store });
+
+  } catch (err) {
+    console.error("Error getting store by ID:", err);
+    return error("Failed to get store", 500);
+  }
 }
