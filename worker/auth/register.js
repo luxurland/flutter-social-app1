@@ -58,6 +58,19 @@ export async function register(request, env) {
   }
 
   try {
+    // ===== DEBUGGING LOGS - START =====
+    // TODO: Remove these logs after confirming JWT_SECRET and DB are working
+    console.log('================ DEBUG INFO ================');
+    console.log('JWT_SECRET exists:', !!env.JWT_SECRET);
+    console.log('JWT_SECRET type:', typeof env.JWT_SECRET);
+    console.log('JWT_SECRET length:', env.JWT_SECRET ? env.JWT_SECRET.length : 0);
+    
+    console.log('DB binding exists:', !!env.DB);
+    console.log('DB type:', typeof env.DB);
+    console.log('All env keys:', Object.keys(env).join(', '));
+    console.log('============================================');
+    // ===== DEBUGGING LOGS - END =====
+
     // Parse request body
     let body;
     try {
